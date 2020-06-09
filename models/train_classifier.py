@@ -1,5 +1,5 @@
+"""import libraries"""
 import sys
-# import libraries
 import re
 import numpy as np
 import pandas as pd
@@ -22,6 +22,10 @@ import nltk
 nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
 
 def load_data(database_filepath):
+    """
+    Load in data from cleaned database and create Y and X inputs
+    Also return category names to use with model evaluation
+    """
     engine = create_engine("sqlite:///{}".format(database_filepath))
     df = pd.read_sql_query("SELECT * from message", engine)
     X=df['message']
@@ -37,6 +41,12 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    """
+    Tokenize the input catastrophe messages to separate sentences into words
+    Lematize to reduce words to their roots (to closest noun)
+    Also clean tokens by making them lower case and removing leading and trailing spaces
+    Return cleaned tokens
+    """
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -49,6 +59,11 @@ def tokenize(text):
 
 
 def build_model():
+    """
+    Create model build pipline
+    Then specify parameters
+    Run gridsearch to select optimal parameters
+    """
     model = Pipeline([
     ('vect', CountVectorizer(tokenizer=tokenize)),
     ('tfidf', TfidfTransformer()),
@@ -65,15 +80,26 @@ def build_model():
     return cv
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Evaluate model
+    """
     y_pred = model.predict(X_test)
     return y_pred
 
 
 def save_model(model, model_filepath):
+    """
+    save model as a pickle file
+    """
     pickle.dump(model, open(model_filepath, "wb"))
 
     
 def main():
+    """
+    Function that runs the whole model building function
+    Produces an output to show how far along model build is
+    Also contains instructions for model build
+    """
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
