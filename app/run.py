@@ -46,8 +46,6 @@ def index():
     Create graph for home page displaying count of count of messages in each category
     """
     
-    genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
     
     message_counts = df[['related', 'request', 'offer', 'aid_related', 'medical_help', 'medical_products', 'search_and_rescue', 'security', 'military',
       'child_alone', 'water', 'food', 'shelter', 'clothing', 'money', 'missing_people', 'refugees', 'death', 'other_aid', 'infrastructure_related',
