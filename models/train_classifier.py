@@ -79,10 +79,10 @@ def build_model():
 
 def evaluate_model(model, X_test, Y_test, category_names):
     """
-    Evaluate model
+    Evaluate model and return the classification report
     """
     y_pred = model.predict(X_test)
-    return y_pred
+    return print(classification_report(y_test, y_pred, target_names=category_names)) 
 
 
 def save_model(model, model_filepath):
