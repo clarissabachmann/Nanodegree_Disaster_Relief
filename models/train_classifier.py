@@ -103,13 +103,13 @@ def main():
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
         X, y, category_names = load_data(database_filepath)
-        X_train, X_test, Y_train, y_test = train_test_split(X, y, test_size=0.2)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
         
         print('Building model...')
         model = build_model()
         
         print('Training model...')
-        model.fit(X_train, Y_train)
+        model.fit(X_train, y_train)
         
         print('Evaluating model...')
         evaluate_model(model, y_test, X_test, category_names)
