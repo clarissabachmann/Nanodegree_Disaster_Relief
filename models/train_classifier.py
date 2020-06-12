@@ -25,6 +25,8 @@ def load_data(database_filepath):
     Load in data from cleaned database and create y and X inputs
     Also return category
     names to use with model evaluation
+    input: database_filepath
+    output: X, y, and category names
     """
     engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table('message',engine)
@@ -39,7 +41,9 @@ def tokenize(text):
     Tokenize the input catastrophe messages to separate sentences into words
     Lematize to reduce words to their roots (to closest noun)
     Also clean tokens by making them lower case and removing leading and trailing spaces
-    Return cleaned tokens
+
+    input: text from messages
+    output: cleaned tokens 
     """
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
@@ -57,6 +61,8 @@ def build_model():
     Create model build pipline
     Then specify parameters
     Run gridsearch to select optimal parameters
+    input: nothing
+    output: model
     """
     model = Pipeline([
     ('vect', CountVectorizer(tokenizer=tokenize)),
@@ -76,6 +82,9 @@ def build_model():
 def evaluate_model(model, X_train, Y_train, y_test, X_test, category_names):
     """
     Evaluate model and return the classification report
+    Both fit and predict were combined into one function to maintain data structure (does not work separated)
+    input: model, X_train, Y_train, y_test, X_test, category_names
+    output: classfication report
     """
     model.fit(X_train, Y_train)
     y_pred = model.predict(X_test)
@@ -85,6 +94,8 @@ def evaluate_model(model, X_train, Y_train, y_test, X_test, category_names):
 def save_model(model, model_filepath):
     """
     save model as a pickle file
+    input: model and model__filepath to save model to
+    output: nothing
     """
     pickle.dump(model, open(model_filepath, "wb"))
 
@@ -94,6 +105,8 @@ def main():
     Function that runs the whole model building function
     Produces an output to show how far along model build is
     Also contains instructions for model build
+    input: database_filepath and model_filepath
+    output: nothing
     """
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
