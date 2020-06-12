@@ -8,6 +8,8 @@ def load_data(messages_filepath, categories_filepath):
     Function used to read in raw data in the form of csv file
     Then merge them together on Id
     return pandas dataframe
+    input: messages_filepath and categories_filepath which are the two raw data csvs
+    output:merged dataframe of both csvs
     """
     dfMessages = pd.read_csv(messages_filepath)
     dfCategories = pd.read_csv(categories_filepath)
@@ -25,6 +27,8 @@ def clean_data(dfCMessages):
     Drop duplicate values
     Remove any values that do not work on a 0-1 scale
     Return cleaned dataframe
+    input: the merged dataframe: dfCMessages
+    output: the cleaned dataframe dfClean
     """
     categories = dfCMessages["categories"].str.split(";", expand=True)
     row = categories.iloc[0]
@@ -42,6 +46,8 @@ def clean_data(dfCMessages):
 def save_data(dfClean, database_filename):
     """
     Save cleaned dataframe as a SQLite database
+    input: cleaned dataframe and the database filename
+    output: nothing
     """
     engine = create_engine(f'sqlite:///{database_filename}')
     dfClean.to_sql('message', engine, index=False, if_exists='replace') 
@@ -51,6 +57,8 @@ def main():
     """
     Main function that kicks off all the other functions to clean and save the data
     Contains status updates and initial instructions
+    input: messages_filepath, categories_filepath, database_filepath (the raw dataframes and name of created database)
+    output: nothing
     """
     if len(sys.argv) == 4:
 
