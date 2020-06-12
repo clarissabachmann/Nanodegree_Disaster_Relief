@@ -44,7 +44,7 @@ def save_data(dfClean, database_filename):
     Save cleaned dataframe as a SQLite database
     """
     engine = create_engine(f'sqlite:///{database_filename}')
-    dfClean.to_sql('message', engine, index=False) 
+    dfClean.to_sql('message', engine, index=False, if_exists='replace') 
 
 
 def main():
