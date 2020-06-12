@@ -82,16 +82,19 @@ Finally you have to run the run.py file found in the app folder. To deploy the w
 Files in the repository
 
 The following files are found in the repository:
+
 data folder:
 
 process_data.py file that runs the ETL and saves it as a SQLite database
 disaster_messages.csv: one of the raw data files
 disaster_categories.csv: the other raw data file
 DisasterResponse.db: the outputted database created by the process_data.py code
+
 models folder:
 
 train_classifier.py: file that trains and fits the model and saves it as a pickle file
 classifier.pkl: pickle file created by train_classifier
+
 app folder:
 
 run.py: file used to create and deploy the webapp
