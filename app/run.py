@@ -15,6 +15,13 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
+    """
+    Tokenize the input catastrophe messages to separate sentences into words
+    Lematize to reduce words to their roots (to closest noun)
+    Also clean tokens by making them lower case and removing leading and trailing spaces
+    input: text from messages
+    output: cleaned tokens 
+    """
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -37,16 +44,15 @@ model = joblib.load("../models/classifier.pkl")
 @app.route('/')
 @app.route('/index')
 def index():
-    
+    #create variables for the genre plot
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
-    
+    #create variables for message count plot
     message_counts = df[['related', 'request', 'offer', 'aid_related', 'medical_help', 'medical_products', 'search_and_rescue', 'security', 'military',
       'child_alone', 'water', 'food', 'shelter', 'clothing', 'money', 'missing_people', 'refugees', 'death', 'other_aid', 'infrastructure_related',
       'transport', 'buildings', 'electricity', 'tools', 'hospitals', 'shops', 'aid_centers', 'other_infrastructure', 'weather_related',
       'floods', 'storm', 'fire', 'earthquake', 'cold', 'other_weather', 'direct_report']].sum()
-    # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+    # create plots
     graphs = [
         {
             'data': [
