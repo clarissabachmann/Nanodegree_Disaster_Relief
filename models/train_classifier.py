@@ -117,7 +117,7 @@ def main():
         print('Building model...')
         model = build_model()
 
-        print('Train and Evaluating model...')
+        print('Training and Evaluating model...')
         evaluate_model(model, X_train, Y_train, y_test, X_test, category_names)
 
         print('Saving model...\n    MODEL: {}'.format(model_filepath))
