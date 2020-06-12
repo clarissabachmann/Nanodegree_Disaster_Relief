@@ -2,6 +2,7 @@
 import sys
 import re
 import pandas as pd
+import numpy as np
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
@@ -21,16 +22,17 @@ nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
 
 def load_data(database_filepath):
     """
-    Load in data from cleaned database and create y and X inputs, returns categorys 
+    Load in data from cleaned database and create y and X inputs
     Also return category
     names to use with model evaluation
     """
-    engine = create_engine("sqlite:///{}".format(database_filepath))
-    df = pd.read_sql_query("SELECT * from message", engine)
+    engine = create_engine('sqlite:///' + database_filepath)
+    df = pd.read_sql_table('message',engine)
     X = df.iloc[:,1]
     y = df.iloc[:,4:]
     category_names = y.columns
     return X, y, category_names
+
 
 def tokenize(text):
     """
@@ -69,14 +71,15 @@ def build_model():
         'clf__estimator__min_samples_leaf': [5, 100]
     }
     cv = GridSearchCV(estimator=model, param_grid=parameters, cv=3)
-    return cv
+    return model
 
-def evaluate_model(model, X_test, y_test, category_names):
+def evaluate_model(model, X_train, Y_train, y_test, X_test, category_names):
     """
     Evaluate model and return the classification report
     """
+    model.fit(X_train, Y_train)
     y_pred = model.predict(X_test)
-    return print(classification_report(y_test, y_pred, target_names=category_names)) 
+    print(classification_report(y_test, y_pred, target_names=category_names)) 
 
 
 def save_model(model, model_filepath):
@@ -96,16 +99,13 @@ def main():
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
         X, y, category_names = load_data(database_filepath)
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+        X_train, X_test, Y_train, y_test = train_test_split(X, y, test_size=0.2)
         
         print('Building model...')
         model = build_model()
-        
-        print('Training model...')
-        model.fit(X_train, y_train)
-        
-        print('Evaluating model...')
-        evaluate_model(model, y_test, X_test, category_names)
+
+        print('Train and Evaluating model...')
+        evaluate_model(model, X_train, Y_train, y_test, X_test, category_names)
 
         print('Saving model...\n    MODEL: {}'.format(model_filepath))
         save_model(model, model_filepath)
