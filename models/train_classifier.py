@@ -21,23 +21,16 @@ nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
 
 def load_data(database_filepath):
     """
-    Load in data from cleaned database and create y and X inputs
+    Load in data from cleaned database and create y and X inputs, returns categorys 
     Also return category
     names to use with model evaluation
     """
     engine = create_engine("sqlite:///{}".format(database_filepath))
     df = pd.read_sql_query("SELECT * from message", engine)
-    X=df['message']
-    y=df[['related', 'request', 'offer', 'aid_related', 'medical_help', 'medical_products', 'search_and_rescue', 'security', 'military',
-      'child_alone', 'water', 'food', 'shelter', 'clothing', 'money', 'missing_people', 'refugees', 'death', 'other_aid', 'infrastructure_related',
-      'transport', 'buildings', 'electricity', 'tools', 'hospitals', 'shops', 'aid_centers', 'other_infrastructure', 'weather_related',
-      'floods', 'storm', 'fire', 'earthquake', 'cold', 'other_weather', 'direct_report']]
-    category_names = df[['related', 'request', 'offer', 'aid_related', 'medical_help', 'medical_products', 'search_and_rescue', 'security', 'military',
-      'child_alone', 'water', 'food', 'shelter', 'clothing', 'money', 'missing_people', 'refugees', 'death', 'other_aid', 'infrastructure_related',
-      'transport', 'buildings', 'electricity', 'tools', 'hospitals', 'shops', 'aid_centers', 'other_infrastructure', 'weather_related',
-      'floods', 'storm', 'fire', 'earthquake', 'cold', 'other_weather', 'direct_report']]
+    X = df.iloc[:,1]
+    y = df.iloc[:,4:]
+    category_names = y.columns
     return X, y, category_names
-
 
 def tokenize(text):
     """
