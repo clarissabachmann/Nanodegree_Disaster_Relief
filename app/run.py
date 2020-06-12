@@ -1,4 +1,3 @@
-#import packages
 import json
 import plotly
 import pandas as pd
@@ -16,10 +15,6 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
-    """
-    Tokenize messages
-    Lemmatize messages and clean them to lower case and of leading and trailing spaces
-    """
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -42,10 +37,9 @@ model = joblib.load("../models/classifier.pkl")
 @app.route('/')
 @app.route('/index')
 def index():
-    """
-    Create graph for home page displaying count of count of messages in each category
-    """
     
+    genre_counts = df.groupby('genre').count()['message']
+    genre_names = list(genre_counts.index)
     
     message_counts = df[['related', 'request', 'offer', 'aid_related', 'medical_help', 'medical_products', 'search_and_rescue', 'security', 'military',
       'child_alone', 'water', 'food', 'shelter', 'clothing', 'money', 'missing_people', 'refugees', 'death', 'other_aid', 'infrastructure_related',
@@ -57,7 +51,25 @@ def index():
         {
             'data': [
                 Bar(
-                    x=list(df[['related', 'request', 'offer', 'aid_related', 'medical_help', 'medical_products', 'search_and_rescue', 'security', 'military',
+                    x=genre_names,
+                    y=genre_counts
+                )
+            ],
+            
+            'layout': {
+                'title': 'Number of Messages in each Genre',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Genres"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=list(df[['related', 'request', 'offer', 'aid_related', 'medical_help', 'medical_products', 'search_and_rescue',       'security', 'military',
                     'child_alone', 'water', 'food', 'shelter', 'clothing', 'money', 'missing_people', 'refugees', 'death', 'other_aid', 'infrastructure_related',
                     'transport', 'buildings', 'electricity', 'tools', 'hospitals', 'shops', 'aid_centers', 'other_infrastructure', 'weather_related',
                     'floods', 'storm', 'fire', 'earthquake', 'cold', 'other_weather', 'direct_report']]),
